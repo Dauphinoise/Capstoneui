@@ -298,6 +298,70 @@ export function MyCalendar({ bookings, onCancelBooking, onBack }: MyCalendarProp
                       </div>
                     )}
 
+                    {/* Academic Purpose */}
+                    {booking.purpose && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
+                        <p className="text-xs font-semibold text-gray-700 mb-1">Academic Purpose:</p>
+                        <p className="text-xs text-gray-600">{booking.purpose}</p>
+                      </div>
+                    )}
+
+                    {/* Approval Workflow Progress */}
+                    {booking.approvalWorkflow && booking.status === 'pending' && (
+                      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3 mb-3">
+                        <p className="text-xs font-semibold text-blue-900 mb-2">📋 Approval Progress</p>
+                        <div className="space-y-2">
+                          {booking.approvalWorkflow.approvers.map((approver, index) => {
+                            const isPending = index === booking.approvalWorkflow!.step - 1;
+                            const isCompleted = index < booking.approvalWorkflow!.step - 1;
+                            
+                            return (
+                              <div
+                                key={index}
+                                className={`flex items-center gap-2 p-2 rounded-lg ${
+                                  isCompleted
+                                    ? 'bg-green-100'
+                                    : isPending
+                                    ? 'bg-yellow-100'
+                                    : 'bg-gray-100'
+                                }`}
+                              >
+                                <div className="flex-shrink-0">
+                                  {isCompleted ? (
+                                    <CheckCircleIcon className="w-4 h-4 text-green-600" />
+                                  ) : isPending ? (
+                                    <AlertCircleIcon className="w-4 h-4 text-yellow-600" />
+                                  ) : (
+                                    <div className="w-4 h-4 border-2 border-gray-400 rounded-full" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className={`text-xs font-medium ${
+                                    isCompleted
+                                      ? 'text-green-900'
+                                      : isPending
+                                      ? 'text-yellow-900'
+                                      : 'text-gray-600'
+                                  }`}>
+                                    {approver}
+                                  </p>
+                                </div>
+                                {isPending && (
+                                  <span className="text-xs font-semibold text-yellow-700">Reviewing...</span>
+                                )}
+                                {isCompleted && (
+                                  <span className="text-xs font-semibold text-green-700">✓ Approved</span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-blue-700 mt-2">
+                          Step {booking.approvalWorkflow.step} of {booking.approvalWorkflow.totalSteps} • Currently with: {booking.approvalWorkflow.currentApprover}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Group Session Info */}
                     {booking.sessionCode && (
                       <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-4 mb-3">

@@ -6,7 +6,10 @@ import { LibrarianDashboard } from './components/web/LibrarianDashboard';
 import { ServiceAdminDashboard } from './components/web/ServiceAdminDashboard';
 import { StaffCounterDashboard } from './components/web/StaffCounterDashboard';
 import { FacilityAdminPortal } from './components/web/FacilityAdminPortal';
-import { ExternalRenterPortal } from './components/web/ExternalRenterPortal';
+import { ExternalRenterPortalNew } from './components/web/ExternalRenterPortalNew';
+import { ExternalRenterAuth } from './components/web/ExternalRenterAuth';
+import { ProgramChairPortal } from './components/web/ProgramChairPortal';
+import { DepartmentEndorserPortal } from './components/web/DepartmentEndorserPortal';
 import { KioskUI } from './components/kiosk/KioskUI';
 import { HallwayMonitor } from './components/display/HallwayMonitor';
 import { AuthLanding } from './components/AuthLanding';
@@ -15,6 +18,9 @@ import { StudentFacultyRegister, RegisterData } from './components/StudentFacult
 import { StaffLogin } from './components/StaffLogin';
 import { AdminLogin } from './components/AdminLogin';
 import { SuperAdminLogin } from './components/SuperAdminLogin';
+import { ProgramChairLogin } from './components/ProgramChairLogin';
+import { DepartmentEndorserLogin } from './components/DepartmentEndorserLogin';
+import { MobileSplashScreen } from './components/MobileSplashScreen';
 import { ExternalRenterApplication, ApplicationData } from './components/ExternalRenterApplication';
 import { DesignGallery } from './components/DesignGallery';
 import { DesktopFrame } from './components/DesktopFrame';
@@ -25,11 +31,15 @@ import { SmartphoneIcon, MonitorIcon, LayoutDashboardIcon, BuildingIcon } from '
 type AppView = 
   | 'auth-landing'
   | 'design-gallery'
+  | 'splash-student-faculty'
   | 'student-faculty-login'
   | 'student-faculty-register'
   | 'staff-login'
   | 'admin-login'
   | 'super-admin-login'
+  | 'program-chair-login'
+  | 'dept-endorser-login'
+  | 'external-renter-auth'
   | 'external-renter-application'
   | 'forgot-password-student-faculty'
   | 'forgot-password-staff'
@@ -51,6 +61,9 @@ type AppView =
   | 'staff-counter'
   | 'facility-admin'
   | 'external-renter'
+  | 'program-chair-cthm'
+  | 'program-chair-seca'
+  | 'dept-endorser'
   | 'kiosk'
   | 'hallway-monitor';
 
@@ -75,43 +88,66 @@ function App() {
     return (
       <AuthLanding
         onSelectPortal={(portal) => {
-          if (portal === 'student-faculty') setCurrentView('student-faculty-login');
+          if (portal === 'student-faculty') setCurrentView('splash-student-faculty');
           else if (portal === 'staff') setCurrentView('staff-login');
           else if (portal === 'admin') setCurrentView('admin-login');
           else if (portal === 'super-admin') setCurrentView('super-admin-login');
           else if (portal === 'external-renter') setCurrentView('external-renter-application');
+          else if (portal === 'program-chair') setCurrentView('program-chair-login');
+          else if (portal === 'dept-endorser') setCurrentView('dept-endorser-login');
         }}
       />
+    );
+  }
+
+  // Splash Screens
+  if (currentView === 'splash-student-faculty') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileSplashScreen
+            onContinue={() => setCurrentView('student-faculty-login')}
+          />
+        </div>
+      </div>
     );
   }
 
   // Student/Faculty Login
   if (currentView === 'student-faculty-login') {
     return (
-      <StudentFacultyLogin
-        onBack={() => setCurrentView('design-gallery')}
-        onLogin={(email, password) => {
-          // Simulate successful login - go directly to mobile app
-          alert(`Login successful for ${email}`);
-          setCurrentView('mobile');
-        }}
-        onRegister={() => setCurrentView('student-faculty-register')}
-        onForgotPassword={() => setCurrentView('forgot-password-student-faculty')}
-      />
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <StudentFacultyLogin
+            onBack={() => setCurrentView('splash-student-faculty')}
+            onLogin={(email, password) => {
+              // Simulate successful login - go directly to mobile app
+              alert(`Login successful for ${email}`);
+              setCurrentView('mobile');
+            }}
+            onRegister={() => setCurrentView('student-faculty-register')}
+            onForgotPassword={() => setCurrentView('forgot-password-student-faculty')}
+          />
+        </div>
+      </div>
     );
   }
 
   // Student/Faculty Register
   if (currentView === 'student-faculty-register') {
     return (
-      <StudentFacultyRegister
-        onBack={() => setCurrentView('student-faculty-login')}
-        onRegister={(data: RegisterData) => {
-          // Simulate successful registration
-          alert(`Registration successful! Please check ${data.email} for verification.`);
-          setCurrentView('student-faculty-login');
-        }}
-      />
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <StudentFacultyRegister
+            onBack={() => setCurrentView('student-faculty-login')}
+            onRegister={(data: RegisterData) => {
+              // Simulate successful registration
+              alert(`Registration successful! Please check ${data.email} for verification.`);
+              setCurrentView('student-faculty-login');
+            }}
+          />
+        </div>
+      </div>
     );
   }
 
@@ -160,6 +196,36 @@ function App() {
     );
   }
 
+  // Program Chair Login
+  if (currentView === 'program-chair-login') {
+    return (
+      <ProgramChairLogin
+        onBack={() => setCurrentView('design-gallery')}
+        onLogin={(programType) => {
+          // Simulate successful login
+          if (programType === 'CTHM') {
+            setCurrentView('program-chair-cthm');
+          } else {
+            setCurrentView('program-chair-seca');
+          }
+        }}
+      />
+    );
+  }
+
+  // Department Endorser Login
+  if (currentView === 'dept-endorser-login') {
+    return (
+      <DepartmentEndorserLogin
+        onBack={() => setCurrentView('design-gallery')}
+        onLogin={() => {
+          // Simulate successful login
+          setCurrentView('dept-endorser');
+        }}
+      />
+    );
+  }
+
   // External Renter Application
   if (currentView === 'external-renter-application') {
     return (
@@ -174,33 +240,82 @@ function App() {
     );
   }
 
+  // External Renter Auth (New)
+  if (currentView === 'external-renter-auth') {
+    return (
+      <ExternalRenterAuth
+        onBack={() => setCurrentView('design-gallery')}
+        onLoginSuccess={(userType, userData) => {
+          alert(`Login successful for ${userData.name} (${userType})`);
+          setCurrentView('external-renter');
+        }}
+      />
+    );
+  }
+
   if (currentView === 'mobile') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'mobile-student-home') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} initialUserType="student" />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} initialUserType="student" />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'mobile-faculty-home') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} initialUserType="faculty" />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} initialUserType="faculty" />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'mobile-rooms') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'mobile-queue') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'mobile-profile') {
-    return <MobileApp onBack={() => setCurrentView('design-gallery')} />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <MobileApp onBack={() => setCurrentView('design-gallery')} />
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'super-admin') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}> 
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -214,7 +329,7 @@ function App() {
 
   if (currentView === 'librarian') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -228,7 +343,7 @@ function App() {
 
   if (currentView === 'service-admin-itso') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -242,7 +357,7 @@ function App() {
 
   if (currentView === 'service-admin-treasury') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -256,7 +371,7 @@ function App() {
 
   if (currentView === 'service-admin-registrar') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -270,7 +385,7 @@ function App() {
 
   if (currentView === 'service-admin-admission') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -284,7 +399,7 @@ function App() {
 
   if (currentView === 'staff-counter') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -298,35 +413,47 @@ function App() {
 
   if (currentView === 'facility-admin') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
-        <button
-          onClick={() => setCurrentView('design-gallery')}
-          className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
-        >
-          ← Back
-        </button>
-        <FacilityAdminDashboard />
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
+        <FacilityAdminDashboard onLogout={() => setCurrentView('design-gallery')} />
       </div>
     );
   }
 
   if (currentView === 'external-renter') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
-        <button
-          onClick={() => setCurrentView('design-gallery')}
-          className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
-        >
-          ← Back
-        </button>
-        <ExternalRenterPortal />
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
+        <ExternalRenterPortalNew />
+      </div>
+    );
+  }
+
+  if (currentView === 'program-chair-cthm') {
+    return (
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
+        <ProgramChairPortal programType="CTHM" onLogout={() => setCurrentView('design-gallery')} />
+      </div>
+    );
+  }
+
+  if (currentView === 'program-chair-seca') {
+    return (
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
+        <ProgramChairPortal programType="SECA" onLogout={() => setCurrentView('design-gallery')} />
+      </div>
+    );
+  }
+
+  if (currentView === 'dept-endorser') {
+    return (
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
+        <DepartmentEndorserPortal departmentName="IT Department" onLogout={() => setCurrentView('design-gallery')} />
       </div>
     );
   }
 
   if (currentView === 'kiosk') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -340,7 +467,7 @@ function App() {
 
   if (currentView === 'hallway-monitor') {
     return (
-      <div className="relative overflow-y-auto" style={{ width: '1920px', height: '1080px' }}>
+      <div className="relative overflow-y-auto" style={{ width: '1440px', height: '1024px' }}>
         <button
           onClick={() => setCurrentView('design-gallery')}
           className="absolute top-4 right-4 z-50 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
@@ -354,10 +481,14 @@ function App() {
 
   if (currentView === 'forgot-password-student-faculty') {
     return (
-      <ForgotPassword
-        onBack={() => setCurrentView('student-faculty-login')}
-        accountType="student-faculty"
-      />
+      <div className="flex items-center justify-center min-h-screen bg-gray-200">
+        <div style={{ width: '393px', height: '852px' }} className="bg-white shadow-2xl overflow-y-auto">
+          <ForgotPassword
+            onBack={() => setCurrentView('student-faculty-login')}
+            accountType="student-faculty"
+          />
+        </div>
+      </div>
     );
   }
 

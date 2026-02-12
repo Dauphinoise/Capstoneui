@@ -1,173 +1,118 @@
 import React, { useState } from 'react';
 import { 
-  LayoutDashboardIcon, ClipboardListIcon, BuildingIcon, SettingsIcon, 
-  BellIcon, CheckCircleIcon, XCircleIcon, ClockIcon, FilterIcon, 
-  SearchIcon, ChevronDownIcon, ChevronUpIcon, AlertCircleIcon,
-  CalendarIcon, UsersIcon, WrenchIcon
+  LayoutDashboardIcon, ClipboardListIcon, CalendarIcon, BuildingIcon,
+  SettingsIcon, BellIcon, CheckCircleIcon, XCircleIcon, ClockIcon,
+  FilterIcon, SearchIcon, FileTextIcon, ChevronDownIcon, ChevronUpIcon,
+  AlertCircleIcon
 } from 'lucide-react';
 import { WebAccountSettings } from './WebAccountSettings';
 
-type ViewType = 'dashboard' | 'approvals' | 'facilities' | 'schedule';
+type ViewType = 'dashboard' | 'endorsements' | 'schedule' | 'affiliates';
 
-interface FacilityReservation {
+interface AffiliateEndorsement {
   id: string;
-  requestedBy: string;
-  userType: 'student' | 'faculty' | 'affiliate' | 'guest';
-  organization?: string; // For affiliates/guests
-  facilityName: string;
-  facilityType: 'classroom' | 'lab' | 'gym' | 'hall' | 'kitchen' | 'restaurant' | 'suite' | 'study-room' | 'comlab' | 'engineering-lab' | 'science-lab';
+  organizationName: string;
+  contactPerson: string;
+  contactEmail: string;
+  venueName: string;
+  eventType: string;
   date: string;
   time: string;
   attendees: number;
   purpose: string;
-  status: 'pending' | 'approved' | 'rejected';
+  endorsementLetter?: string;
+  status: 'pending' | 'endorsed' | 'rejected';
   submittedAt: string;
-  previousApprovers?: string[]; // Shows who already approved
-  requiresPayment?: boolean; // For guests only
+  nextApprover?: string;
 }
 
-interface FacilityAdminDashboardProps {
+interface DepartmentEndorserPortalProps {
+  departmentName: string;
   onLogout: () => void;
 }
 
-export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps) {
+export function DepartmentEndorserPortal({ departmentName, onLogout }: DepartmentEndorserPortalProps) {
   const [activeView, setActiveView] = useState<ViewType>('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [expandedReservation, setExpandedReservation] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [expandedEndorsement, setExpandedEndorsement] = useState<string | null>(null);
+  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'endorsed' | 'rejected'>('all');
 
-  const adminName = 'John Admin';
+  const endorserName = 'Dr. Department Head';
 
-  // Mock facility reservations - FMO is LAST approver for ALL
-  const mockReservations: FacilityReservation[] = [
+  // Mock endorsement data
+  const mockEndorsements: AffiliateEndorsement[] = [
     {
       id: '1',
-      requestedBy: 'Juan Dela Cruz',
-      userType: 'student',
-      facilityName: 'University Kitchen',
-      facilityType: 'kitchen',
+      organizationName: 'PLDT Corporation',
+      contactPerson: 'Maria Santos',
+      contactEmail: 'maria.santos@pldt.com',
+      venueName: 'Grand Hall',
+      eventType: 'Corporate Training',
       date: 'Feb 15, 2026',
-      time: '9:00 AM - 12:00 PM',
-      attendees: 25,
-      purpose: 'Culinary Arts practical exam - need cooking stations, utensils, and storage access.',
+      time: '9:00 AM - 5:00 PM',
+      attendees: 80,
+      purpose: 'IT Infrastructure training program for employees. Need projector, sound system, and internet access.',
+      endorsementLetter: 'Official endorsement from IT Department',
       status: 'pending',
       submittedAt: '2 hours ago',
-      previousApprovers: ['CTHM Program Chair'],
+      nextApprover: 'FMO (Facility Admin)',
     },
     {
       id: '2',
-      requestedBy: 'Maria Santos',
-      userType: 'student',
-      facilityName: 'Engineering Lab B',
-      facilityType: 'engineering-lab',
-      date: 'Feb 16, 2026',
+      organizationName: 'Department of Education',
+      contactPerson: 'Juan Dela Cruz',
+      contactEmail: 'juan.delacruz@deped.gov.ph',
+      venueName: 'Conference Room A',
+      eventType: 'Educational Seminar',
+      date: 'Feb 18, 2026',
       time: '1:00 PM - 4:00 PM',
-      attendees: 30,
-      purpose: 'Robotics project testing - need workbenches, power outlets, and tool access.',
+      attendees: 40,
+      purpose: 'Teacher training workshop on new curriculum implementation. Need whiteboard and presentation equipment.',
+      endorsementLetter: 'Endorsed by Education Department',
       status: 'pending',
-      submittedAt: '3 hours ago',
-      previousApprovers: ['SECA Program Chair'],
+      submittedAt: '5 hours ago',
+      nextApprover: 'FMO (Facility Admin)',
     },
     {
       id: '3',
-      requestedBy: 'Pedro Garcia',
-      userType: 'student',
-      facilityName: 'Computer Lab 3',
-      facilityType: 'comlab',
-      date: 'Feb 18, 2026',
-      time: '10:00 AM - 12:00 PM',
-      attendees: 40,
-      purpose: 'Software development workshop - need all computers, projector, and internet access.',
-      status: 'pending',
-      submittedAt: '5 hours ago',
-      previousApprovers: ['SECA Program Chair', 'ITSO'],
-    },
-    {
-      id: '4',
-      requestedBy: 'Ana Reyes',
-      userType: 'student',
-      facilityName: 'Study Room A',
-      facilityType: 'study-room',
-      date: 'Feb 17, 2026',
-      time: '2:00 PM - 5:00 PM',
-      attendees: 8,
-      purpose: 'Group study session for finals - need whiteboards and quiet space.',
-      status: 'pending',
-      submittedAt: '1 hour ago',
-      previousApprovers: ['Librarian'],
-    },
-    {
-      id: '5',
-      requestedBy: 'PLDT Corporation',
-      userType: 'affiliate',
-      organization: 'PLDT Corporation',
-      facilityName: 'Grand Hall',
-      facilityType: 'hall',
+      organizationName: 'City Health Office',
+      contactPerson: 'Dr. Ana Reyes',
+      contactEmail: 'ana.reyes@cityhealth.gov.ph',
+      venueName: 'Gymnasium',
+      eventType: 'Health Fair',
       date: 'Feb 20, 2026',
-      time: '8:00 AM - 5:00 PM',
-      attendees: 150,
-      purpose: 'Corporate training seminar - need stage, projector, sound system, and seating.',
-      status: 'pending',
-      submittedAt: '4 hours ago',
-      previousApprovers: ['IT Department Endorser'],
-      requiresPayment: false,
-    },
-    {
-      id: '6',
-      requestedBy: 'ABC Events Company',
-      userType: 'guest',
-      organization: 'ABC Events Company',
-      facilityName: 'Main Gymnasium',
-      facilityType: 'gym',
-      date: 'Feb 22, 2026',
-      time: '6:00 PM - 10:00 PM',
-      attendees: 300,
-      purpose: 'Corporate anniversary celebration - need full gym space, stage, lighting, and sound system.',
-      status: 'pending',
-      submittedAt: '6 hours ago',
-      previousApprovers: ['Super Admin'],
-      requiresPayment: true,
-    },
-    {
-      id: '7',
-      requestedBy: 'Prof. Garcia',
-      userType: 'faculty',
-      facilityName: 'Room 304',
-      facilityType: 'classroom',
-      date: 'Feb 14, 2026',
-      time: '9:00 AM - 11:00 AM',
-      attendees: 45,
-      purpose: 'Special lecture for CS-301 - need projector and whiteboard.',
-      status: 'approved',
+      time: '8:00 AM - 3:00 PM',
+      attendees: 200,
+      purpose: 'Community health screening and vaccination drive. Need tables, chairs, and electrical outlets.',
+      endorsementLetter: 'Endorsed by Health Services Department',
+      status: 'endorsed',
       submittedAt: '1 day ago',
     },
   ];
 
-  const filteredReservations = mockReservations.filter(reservation => 
-    filterStatus === 'all' || reservation.status === filterStatus
+  const filteredEndorsements = mockEndorsements.filter(endorsement => 
+    filterStatus === 'all' || endorsement.status === filterStatus
   );
 
-  const pendingCount = mockReservations.filter(r => r.status === 'pending').length;
-  const approvedToday = mockReservations.filter(r => r.status === 'approved' && r.submittedAt.includes('hour')).length;
+  const pendingCount = mockEndorsements.filter(e => e.status === 'pending').length;
+  const endorsedToday = mockEndorsements.filter(e => e.status === 'endorsed' && e.submittedAt.includes('hour')).length;
 
-  const handleApprove = (id: string) => {
+  const handleEndorse = (id: string) => {
     // In real app, this would call an API
-    console.log('Approved reservation:', id);
-    alert('Facility reservation approved! User will be notified.');
+    console.log('Endorsed:', id);
   };
 
   const handleReject = (id: string) => {
     // In real app, this would call an API
-    console.log('Rejected reservation:', id);
-    alert('Facility reservation rejected. User will be notified.');
+    console.log('Rejected:', id);
   };
 
   const sidebarItems = [
     { id: 'dashboard' as ViewType, label: 'Dashboard', icon: LayoutDashboardIcon },
-    { id: 'approvals' as ViewType, label: 'Approvals', icon: ClipboardListIcon, badge: pendingCount },
-    { id: 'facilities' as ViewType, label: 'Facilities', icon: BuildingIcon },
+    { id: 'endorsements' as ViewType, label: 'Endorsements', icon: ClipboardListIcon, badge: pendingCount },
     { id: 'schedule' as ViewType, label: 'Schedule', icon: CalendarIcon },
+    { id: 'affiliates' as ViewType, label: 'Affiliates', icon: BuildingIcon },
   ];
 
   const renderContent = () => {
@@ -179,38 +124,38 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Pending Approvals</p>
+                  <p className="text-sm text-gray-600">Pending Endorsements</p>
                   <ClockIcon className="w-5 h-5 text-yellow-600" />
                 </div>
                 <p className="text-3xl font-bold text-gray-900">{pendingCount}</p>
-                <p className="text-xs text-gray-500 mt-1">Final approval needed</p>
+                <p className="text-xs text-gray-500 mt-1">Awaiting your review</p>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Approved Today</p>
+                  <p className="text-sm text-gray-600">Endorsed Today</p>
                   <CheckCircleIcon className="w-5 h-5 text-green-600" />
                 </div>
-                <p className="text-3xl font-bold text-gray-900">{approvedToday}</p>
-                <p className="text-xs text-gray-500 mt-1">Reservations processed</p>
+                <p className="text-3xl font-bold text-gray-900">{endorsedToday}</p>
+                <p className="text-xs text-gray-500 mt-1">Requests processed</p>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">This Week</p>
+                  <p className="text-sm text-gray-600">This Month</p>
                   <CalendarIcon className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-3xl font-bold text-gray-900">42</p>
-                <p className="text-xs text-gray-500 mt-1">Total reservations</p>
+                <p className="text-3xl font-bold text-gray-900">18</p>
+                <p className="text-xs text-gray-500 mt-1">Total requests</p>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm text-gray-600">Active Facilities</p>
+                  <p className="text-sm text-gray-600">Active Affiliates</p>
                   <BuildingIcon className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-3xl font-bold text-gray-900">48</p>
-                <p className="text-xs text-gray-500 mt-1">Operational rooms</p>
+                <p className="text-3xl font-bold text-gray-900">12</p>
+                <p className="text-xs text-gray-500 mt-1">Organizations</p>
               </div>
             </div>
 
@@ -219,62 +164,44 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
               <div className="flex gap-3">
                 <AlertCircleIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-1">Facility Management Office (FMO)</h4>
+                  <h4 className="font-semibold text-blue-900 mb-1">Affiliate Endorsement Process</h4>
                   <p className="text-sm text-blue-800">
-                    As FMO, you are the <span className="font-semibold">FINAL APPROVER</span> for ALL facility reservations. 
-                    Review requests from students, faculty, program chairs, ITSO, librarians, department endorsers, and super admin. 
-                    Verify facility availability, equipment readiness, and payment status (for guests) before approval.
+                    As a Department Endorser, you review and endorse facility rental requests from affiliated organizations. 
+                    <span className="font-semibold"> Affiliates do NOT pay rental fees</span> - your endorsement confirms their 
+                    affiliation and forwards the request to FMO for final approval.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Recent Reservations */}
+            {/* Recent Endorsements */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="font-semibold text-gray-900">Recent Reservation Requests</h3>
+                <h3 className="font-semibold text-gray-900">Recent Endorsement Requests</h3>
               </div>
               <div className="divide-y divide-gray-200">
-                {mockReservations.slice(0, 5).map((reservation) => (
-                  <div key={reservation.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+                {mockEndorsements.slice(0, 3).map((endorsement) => (
+                  <div key={endorsement.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h4 className="font-medium text-gray-900">
-                            {reservation.userType === 'affiliate' || reservation.userType === 'guest'
-                              ? reservation.organization
-                              : reservation.requestedBy
-                            }
-                          </h4>
+                          <h4 className="font-medium text-gray-900">{endorsement.organizationName}</h4>
                           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            reservation.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                            reservation.status === 'approved' ? 'bg-green-100 text-green-700' :
+                            endorsement.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            endorsement.status === 'endorsed' ? 'bg-green-100 text-green-700' :
                             'bg-red-100 text-red-700'
                           }`}>
-                            {reservation.status}
+                            {endorsement.status}
                           </span>
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
-                            {reservation.userType}
-                          </span>
-                          {reservation.requiresPayment && (
-                            <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                              PAYMENT REQUIRED
-                            </span>
-                          )}
                         </div>
                         <p className="text-sm text-gray-600 mb-1">
-                          <span className="font-medium">{reservation.facilityName}</span> • {reservation.date} • {reservation.time}
+                          <span className="font-medium">{endorsement.venueName}</span> • {endorsement.date} • {endorsement.time}
                         </p>
-                        {reservation.previousApprovers && reservation.previousApprovers.length > 0 && (
-                          <p className="text-xs text-blue-600">
-                            ✓ Approved by: {reservation.previousApprovers.join(' → ')}
-                          </p>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">{reservation.submittedAt}</p>
+                        <p className="text-xs text-gray-500">{endorsement.submittedAt}</p>
                       </div>
-                      {reservation.status === 'pending' && (
+                      {endorsement.status === 'pending' && (
                         <button
-                          onClick={() => setActiveView('approvals')}
+                          onClick={() => setActiveView('endorsements')}
                           className="ml-4 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                         >
                           Review
@@ -288,7 +215,7 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
           </div>
         );
 
-      case 'approvals':
+      case 'endorsements':
         return (
           <div className="space-y-6">
             {/* Filter Bar */}
@@ -299,7 +226,7 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Search by name or facility..."
+                      placeholder="Search by organization or venue..."
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -313,85 +240,83 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
                   >
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
+                    <option value="endorsed">Endorsed</option>
                     <option value="rejected">Rejected</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* Reservations List */}
+            {/* Endorsements List */}
             <div className="space-y-4">
-              {filteredReservations.map((reservation) => (
-                <div key={reservation.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              {filteredEndorsements.map((endorsement) => (
+                <div key={endorsement.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                   <div className="px-6 py-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {reservation.userType === 'affiliate' || reservation.userType === 'guest'
-                              ? reservation.organization
-                              : reservation.requestedBy
-                            }
-                          </h3>
+                          <h3 className="text-lg font-semibold text-gray-900">{endorsement.organizationName}</h3>
                           <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            reservation.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                            reservation.status === 'approved' ? 'bg-green-100 text-green-700' :
+                            endorsement.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            endorsement.status === 'endorsed' ? 'bg-green-100 text-green-700' :
                             'bg-red-100 text-red-700'
                           }`}>
-                            {reservation.status.toUpperCase()}
+                            {endorsement.status.toUpperCase()}
                           </span>
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
-                            {reservation.userType.toUpperCase()}
+                          <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                            NO PAYMENT REQUIRED
                           </span>
-                          {reservation.requiresPayment && (
-                            <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                              PAYMENT REQUIRED
-                            </span>
-                          )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                           <div>
-                            <span className="text-gray-600">Facility:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.facilityName}</span>
+                            <span className="text-gray-600">Contact:</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.contactPerson}</span>
                           </div>
                           <div>
-                            <span className="text-gray-600">Type:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.facilityType}</span>
+                            <span className="text-gray-600">Email:</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.contactEmail}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Venue:</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.venueName}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Event Type:</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.eventType}</span>
                           </div>
                           <div>
                             <span className="text-gray-600">Date:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.date}</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.date}</span>
                           </div>
                           <div>
                             <span className="text-gray-600">Time:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.time}</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.time}</span>
                           </div>
                           <div>
                             <span className="text-gray-600">Attendees:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.attendees} people</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.attendees} people</span>
                           </div>
                           <div>
                             <span className="text-gray-600">Submitted:</span>
-                            <span className="ml-2 font-medium text-gray-900">{reservation.submittedAt}</span>
+                            <span className="ml-2 font-medium text-gray-900">{endorsement.submittedAt}</span>
                           </div>
                         </div>
 
-                        {reservation.previousApprovers && reservation.previousApprovers.length > 0 && (
+                        {endorsement.nextApprover && (
                           <div className="mt-3 flex items-center gap-2 text-sm">
-                            <span className="text-gray-600">Previous Approvers:</span>
-                            <span className="px-2 py-1 bg-green-50 text-green-700 font-medium rounded">
-                              ✓ {reservation.previousApprovers.join(' → ')}
+                            <span className="text-gray-600">Next Approver:</span>
+                            <span className="px-2 py-1 bg-blue-50 text-blue-700 font-medium rounded">
+                              {endorsement.nextApprover}
                             </span>
                           </div>
                         )}
                       </div>
 
                       <button
-                        onClick={() => setExpandedReservation(expandedReservation === reservation.id ? null : reservation.id)}
+                        onClick={() => setExpandedEndorsement(expandedEndorsement === endorsement.id ? null : endorsement.id)}
                         className="ml-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
-                        {expandedReservation === reservation.id ? (
+                        {expandedEndorsement === endorsement.id ? (
                           <ChevronUpIcon className="w-5 h-5 text-gray-600" />
                         ) : (
                           <ChevronDownIcon className="w-5 h-5 text-gray-600" />
@@ -400,38 +325,40 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
                     </div>
 
                     {/* Expanded Details */}
-                    {expandedReservation === reservation.id && (
+                    {expandedEndorsement === endorsement.id && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="mb-4">
-                          <h4 className="text-sm font-semibold text-gray-900 mb-2">Purpose & Requirements:</h4>
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">Event Purpose:</h4>
                           <p className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3">
-                            {reservation.purpose}
+                            {endorsement.purpose}
                           </p>
                         </div>
 
-                        {reservation.requiresPayment && (
-                          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-sm text-red-800">
-                              <span className="font-semibold">⚠️ Payment Required:</span> Guest renter must complete payment after your approval.
-                            </p>
+                        {endorsement.endorsementLetter && (
+                          <div className="mb-4">
+                            <h4 className="text-sm font-semibold text-gray-900 mb-2">Endorsement Letter:</h4>
+                            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                              <FileTextIcon className="w-5 h-5 text-blue-600" />
+                              <span className="text-sm text-blue-900">{endorsement.endorsementLetter}</span>
+                            </div>
                           </div>
                         )}
 
-                        {reservation.status === 'pending' && (
+                        {endorsement.status === 'pending' && (
                           <div className="flex gap-3">
                             <button
-                              onClick={() => handleApprove(reservation.id)}
+                              onClick={() => handleEndorse(endorsement.id)}
                               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
                             >
                               <CheckCircleIcon className="w-5 h-5" />
-                              Approve Reservation
+                              Endorse to FMO
                             </button>
                             <button
-                              onClick={() => handleReject(reservation.id)}
+                              onClick={() => handleReject(endorsement.id)}
                               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
                             >
                               <XCircleIcon className="w-5 h-5" />
-                              Reject Reservation
+                              Reject Request
                             </button>
                           </div>
                         )}
@@ -441,14 +368,14 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
                 </div>
               ))}
 
-              {filteredReservations.length === 0 && (
+              {filteredEndorsements.length === 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-12 text-center">
                   <ClipboardListIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No reservations found</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No endorsements found</h3>
                   <p className="text-sm text-gray-500">
                     {filterStatus === 'all' 
-                      ? 'No reservation requests at this time.'
-                      : `No ${filterStatus} reservations found.`
+                      ? 'No endorsement requests at this time.'
+                      : `No ${filterStatus} requests found.`
                     }
                   </p>
                 </div>
@@ -457,19 +384,19 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
           </div>
         );
 
-      case 'facilities':
-        return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Facility Management</h3>
-            <p className="text-gray-600">Facility status and maintenance management coming soon...</p>
-          </div>
-        );
-
       case 'schedule':
         return (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Reservation Schedule</h3>
-            <p className="text-gray-600">Calendar view coming soon...</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Endorsed Events Schedule</h3>
+            <p className="text-gray-600">Schedule view coming soon...</p>
+          </div>
+        );
+
+      case 'affiliates':
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Affiliate Organizations</h3>
+            <p className="text-gray-600">Affiliate management coming soon...</p>
           </div>
         );
     }
@@ -488,8 +415,8 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
       {/* Sidebar */}
       <aside className="flex flex-col w-64 bg-white border-r border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h1 className="text-lg font-bold text-gray-900">FMO</h1>
-          <p className="text-xs text-gray-500 mt-1">Facility Management Office</p>
+          <h1 className="text-lg font-bold text-gray-900">Dept. Endorser</h1>
+          <p className="text-xs text-gray-500 mt-1">{departmentName}</p>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -522,11 +449,11 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-3 px-4 py-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-              FMO
+              DE
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">{adminName}</p>
-              <p className="text-xs text-gray-500">Facility Admin</p>
+              <p className="text-sm font-medium text-gray-900">{endorserName}</p>
+              <p className="text-xs text-gray-500">Dept. Endorser</p>
             </div>
           </div>
         </div>
@@ -541,7 +468,7 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
               <h2 className="text-2xl font-bold text-gray-900">
                 {sidebarItems.find(i => i.id === activeView)?.label}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">Final Facility Reservation Approvals</p>
+              <p className="text-sm text-gray-500 mt-1">Affiliate Endorsement Management</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -574,8 +501,8 @@ export function FacilityAdminDashboard({ onLogout }: FacilityAdminDashboardProps
       {/* Account Settings Modal */}
       {showSettings && (
         <WebAccountSettings
-          userName={adminName}
-          userRole="facility-admin"
+          userName={endorserName}
+          userRole="admin"
           onClose={() => setShowSettings(false)}
           onLogout={onLogout}
         />

@@ -108,7 +108,7 @@ export function SuperAdminModals({
                     alert('User updated successfully!');
                     setShowModal(null);
                   }}
-                  className="flex-1 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                  className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Save Changes
                 </button>
@@ -139,9 +139,9 @@ export function SuperAdminModals({
             {selectedFacility === 'facility' ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-orange-50 rounded-lg p-4">
-                    <p className="text-sm text-orange-600 font-medium mb-1">Total Rooms</p>
-                    <p className="text-3xl font-bold text-orange-900">37</p>
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <p className="text-sm text-blue-600 font-medium mb-1">Total Rooms</p>
+                    <p className="text-3xl font-bold text-blue-900">37</p>
                   </div>
                   <div className="bg-red-50 rounded-lg p-4">
                     <p className="text-sm text-red-600 font-medium mb-1">Under Maintenance</p>
@@ -180,9 +180,9 @@ export function SuperAdminModals({
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-teal-50 rounded-lg p-4">
-                    <p className="text-sm text-teal-600 font-medium mb-1">Total Study Rooms</p>
-                    <p className="text-3xl font-bold text-teal-900">8</p>
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <p className="text-sm text-blue-600 font-medium mb-1">Total Study Rooms</p>
+                    <p className="text-3xl font-bold text-blue-900">8</p>
                   </div>
                   <div className="bg-green-50 rounded-lg p-4">
                     <p className="text-sm text-green-600 font-medium mb-1">Currently Occupied</p>
@@ -229,7 +229,7 @@ export function SuperAdminModals({
               </button>
               <button
                 onClick={() => setShowModal('edit-facility')}
-                className="flex-1 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"
+                className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2"
               >
                 <EditIcon className="w-4 h-4" />
                 Edit Details

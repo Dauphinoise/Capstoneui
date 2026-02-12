@@ -11,12 +11,13 @@ interface HomeProps {
   activeTicket: QueueTicket | null;
   onShowTicket: () => void;
   onShowCheckIn: () => void;
-  onShowCollaborativeCheckIn?: () => void;
-  onViewCalendar?: () => void;
-  upcomingBookingsCount?: number;
+  onShowCollaborativeCheckIn: () => void;
+  onViewCalendar: () => void;
+  upcomingBookingsCount: number;
+  onShowNotifications?: () => void;
 }
 
-export function Home({ userName, userType, activeBooking, activeTicket, onShowTicket, onShowCheckIn, onShowCollaborativeCheckIn, onViewCalendar, upcomingBookingsCount }: HomeProps) {
+export function Home({ userName, userType, activeBooking, activeTicket, onShowTicket, onShowCheckIn, onShowCollaborativeCheckIn, onViewCalendar, upcomingBookingsCount, onShowNotifications }: HomeProps) {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [showMaintenanceReport, setShowMaintenanceReport] = useState(false);
 
@@ -86,7 +87,10 @@ export function Home({ userName, userType, activeBooking, activeTicket, onShowTi
               {userType === 'faculty' ? '👨‍🏫 Faculty Member' : '🎓 Student'}
             </p>
           </div>
-          <button className="p-2 hover:bg-white/20 rounded-full transition-colors">
+          <button 
+            onClick={onShowNotifications}
+            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+          >
             <BellIcon className="w-6 h-6 text-white" />
           </button>
         </div>

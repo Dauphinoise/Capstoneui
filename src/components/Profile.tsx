@@ -1,13 +1,16 @@
 import React from 'react';
-import { UserIcon, MailIcon, PhoneIcon, IdCardIcon, HistoryIcon, SettingsIcon, LogOutIcon, CalendarDaysIcon } from 'lucide-react';
+import { UserIcon, MailIcon, PhoneIcon, IdCardIcon, HistoryIcon, SettingsIcon, LogOutIcon, CalendarDaysIcon, BellIcon } from 'lucide-react';
 
 interface ProfileProps {
   userName: string;
   userType: 'student' | 'faculty';
   onViewCalendar?: () => void;
+  onViewNotifications?: () => void;
+  onViewSettings?: () => void;
+  onLogout?: () => void;
 }
 
-export function Profile({ userName, userType, onViewCalendar }: ProfileProps) {
+export function Profile({ userName, userType, onViewCalendar, onViewNotifications, onViewSettings, onLogout }: ProfileProps) {
   const mockHistory = [
     {
       id: '1',
@@ -124,14 +127,36 @@ export function Profile({ userName, userType, onViewCalendar }: ProfileProps) {
               </span>
             </button>
           )}
-          <button className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 transition-colors border-b border-gray-200">
-            <SettingsIcon className="w-5 h-5 text-gray-600" />
-            <span className="text-gray-700">Account Settings</span>
-          </button>
-          <button className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 transition-colors text-red-600">
-            <LogOutIcon className="w-5 h-5" />
-            <span>Sign Out</span>
-          </button>
+          {onViewNotifications && (
+            <button 
+              onClick={onViewNotifications}
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-blue-50 transition-colors border-b border-gray-200"
+            >
+              <BellIcon className="w-5 h-5 text-blue-600" />
+              <span className="text-gray-700 font-medium">Notifications</span>
+              <span className="ml-auto text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                View
+              </span>
+            </button>
+          )}
+          {onViewSettings && (
+            <button 
+              onClick={onViewSettings}
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 transition-colors border-b border-gray-200"
+            >
+              <SettingsIcon className="w-5 h-5 text-gray-600" />
+              <span className="text-gray-700">Account Settings</span>
+            </button>
+          )}
+          {onLogout && (
+            <button 
+              onClick={onLogout}
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 transition-colors text-red-600"
+            >
+              <LogOutIcon className="w-5 h-5" />
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { LayoutDashboardIcon, UsersIcon, BuildingIcon, ClockIcon, CalendarIcon, SettingsIcon, TrendingUpIcon, ClipboardListIcon, AlertTriangleIcon, BellIcon, XIcon, CheckIcon } from 'lucide-react';
+import { LayoutDashboardIcon, UsersIcon, BuildingIcon, ClockIcon, CalendarIcon, SettingsIcon, TrendingUpIcon, ClipboardListIcon, AlertTriangleIcon, BellIcon, XIcon, CheckIcon, Building2Icon } from 'lucide-react';
+import { AffiliateManagement } from './AffiliateManagement';
+import { WebAccountSettings } from './WebAccountSettings';
 
-type AdminView = 'dashboard' | 'users' | 'facilities' | 'queues' | 'schedule' | 'settings';
+type AdminView = 'dashboard' | 'users' | 'facilities' | 'queues' | 'schedule' | 'affiliates' | 'settings';
 
 export function SuperAdminDashboard() {
   const [activeView, setActiveView] = useState<AdminView>('dashboard');
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [expandedUserType, setExpandedUserType] = useState<string | null>(null);
   const [expandedQueue, setExpandedQueue] = useState<string | null>(null);
   const [expandedFacilityIdx, setExpandedFacilityIdx] = useState<number | null>(null);
@@ -18,6 +21,7 @@ export function SuperAdminDashboard() {
     { id: 'facilities' as AdminView, label: 'Facilities', icon: BuildingIcon },
     { id: 'queues' as AdminView, label: 'Queue Systems', icon: ClockIcon },
     { id: 'schedule' as AdminView, label: 'Schedules', icon: CalendarIcon },
+    { id: 'affiliates' as AdminView, label: 'Affiliates', icon: Building2Icon },
     { id: 'settings' as AdminView, label: 'Settings', icon: SettingsIcon },
   ];
 
@@ -81,6 +85,12 @@ export function SuperAdminDashboard() {
               >
                 <BellIcon className="w-6 h-6 text-gray-600" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+              <button
+                onClick={() => setShowAccountSettings(true)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <SettingsIcon className="w-6 h-6 text-gray-600" />
               </button>
               {showNotifications && (
                 <div className="absolute right-8 top-20 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50">
@@ -547,6 +557,10 @@ export function SuperAdminDashboard() {
             </div>
           )}
 
+          {activeView === 'affiliates' && (
+            <AffiliateManagement />
+          )}
+
           {activeView === 'settings' && (
             <div className="space-y-6">
               <div className="bg-white rounded-xl border border-gray-200">
@@ -712,6 +726,15 @@ export function SuperAdminDashboard() {
                 Add User
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Account Settings Modal */}
+      {showAccountSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowAccountSettings(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl m-4" onClick={(e) => e.stopPropagation()}>
+            <WebAccountSettings />
           </div>
         </div>
       )}

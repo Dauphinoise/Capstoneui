@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { XIcon, ClockIcon, CalendarIcon, UsersIcon } from 'lucide-react';
+import { XIcon, ClockIcon, CalendarIcon, UsersIcon, CheckCircleIcon, ArrowRightIcon } from 'lucide-react';
 import { Room, Booking } from './MobileApp';
+import { getApprovalWorkflow } from '../utils/approvalWorkflow';
 
 interface BookingModalProps {
   room: Room;
@@ -13,8 +14,8 @@ export function BookingModal({ room, onClose, onBook, userType }: BookingModalPr
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('10:00');
-  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [isGroupSession, setIsGroupSession] = useState(false);
+  const [purpose, setPurpose] = useState(''); // Academic purpose - now includes equipment needs
   
   // Calculate minimum capacity (50% of room capacity, rounded up, minimum 2)
   const minCapacity = Math.max(2, Math.ceil(room.capacity * 0.5));
@@ -22,19 +23,10 @@ export function BookingModal({ room, onClose, onBook, userType }: BookingModalPr
   
   const [participants, setParticipants] = useState(minCapacity);
 
-  const toggleEquipment = (equipment: string) => {
-    setSelectedEquipment(prev =>
-      prev.includes(equipment)
-        ? prev.filter(e => e !== equipment)
-        : [...prev, equipment]
-    );
-  };
-
+  // Get approval workflow based on room type
+  const workflow = getApprovalWorkflow(room.type, false);
+  
   // All bookings now require approval
-  // - Library study rooms (study-room): Need Librarian approval
-  // - Students with equipment: Need Facility Admin approval
-  // - Students without equipment (non-library): Need Facility Admin approval
-  // - Faculty: Need Admin approval
   const needsApproval = true;
 
   // Generate session code for group bookings
@@ -43,19 +35,30 @@ export function BookingModal({ room, onClose, onBook, userType }: BookingModalPr
   };
 
   const handleSubmit = () => {
+    const workflow = getApprovalWorkflow(room.type, false);
+    
     const booking: Booking = {
       id: Math.random().toString(36).substr(2, 9),
       roomId: room.id,
       roomName: room.name,
+      roomType: room.type,
       startTime,
       endTime,
       date,
-      equipment: selectedEquipment,
-      status: needsApproval ? 'pending' : 'awaiting-checkin',
-      requiresApproval: needsApproval,
+      equipment: [], // No separate equipment field
+      purpose: purpose,
+      status: 'pending',
+      requiresApproval: true,
       checkedIn: false,
       sessionCode: isGroupSession ? generateSessionCode() : undefined,
       groupMembers: [],
+      approvalWorkflow: {
+        step: 1,
+        totalSteps: workflow.approvers.length,
+        currentApprover: workflow.approvers[0],
+        approvers: workflow.approvers,
+        statuses: workflow.approvers.map(() => 'pending' as const),
+      },
     };
     onBook(booking);
   };
@@ -168,55 +171,62 @@ export function BookingModal({ room, onClose, onBook, userType }: BookingModalPr
             </div>
           )}
 
-          {/* Equipment Selection */}
+          {/* Academic Purpose - Required */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Additional Equipment
-              {userType === 'student' && (
-                <span className="ml-2 text-xs text-orange-600">(Requires Approval)</span>
-              )}
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Academic Purpose <span className="text-red-600">*</span>
             </label>
-            <div className="space-y-2">
-              {room.amenities.includes('tv') && (
-                <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={selectedEquipment.includes('tv')}
-                    onChange={() => toggleEquipment('tv')}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">TV</span>
-                </label>
-              )}
-              {room.amenities.includes('aircon') && (
-                <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={selectedEquipment.includes('aircon')}
-                    onChange={() => toggleEquipment('aircon')}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700">Air Conditioning</span>
-                </label>
-              )}
+            <textarea
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              placeholder="Describe your academic activity and equipment needs (e.g., Thesis defense - need projector and microphone, Group study session - need whiteboard, Lab experiment - need safety equipment...)"
+              rows={4}
+              required
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              ℹ️ Include your purpose and any equipment you'll need
+            </p>
+          </div>
+
+          {/* Approval Workflow Display */}
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+            <p className="text-sm font-semibold text-blue-900 mb-3">📋 Approval Workflow</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              {workflow.approvers.map((approver, index) => (
+                <React.Fragment key={index}>
+                  <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-blue-200">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <span className="text-xs font-medium text-gray-900">{approver}</span>
+                  </div>
+                  {index < workflow.approvers.length - 1 && (
+                    <ArrowRightIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  )}
+                </React.Fragment>
+              ))}
             </div>
+            <p className="text-xs text-blue-700 mt-3">
+              Your request will go through {workflow.approvers.length} approval step{workflow.approvers.length > 1 ? 's' : ''}
+            </p>
           </div>
 
           {/* Approval Notice */}
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-orange-900 mb-1">⚠️ Approval Required</p>
-            <p className="text-sm text-orange-800">
-              {room.type === 'study-room' 
-                ? 'Library study room bookings require Librarian approval.'
-                : 'Your booking requires Facility Admin approval.'}
-              {' '}You'll be notified via email once reviewed.
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <p className="text-sm font-semibold text-yellow-900 mb-1">⚠️ Approval Required</p>
+            <p className="text-sm text-yellow-800">
+              {workflow.description}. You'll be notified via email once reviewed.
             </p>
           </div>
 
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            className="w-full py-4 rounded-xl font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors"
+            disabled={!purpose.trim()}
+            className={`w-full py-4 rounded-xl font-semibold text-white transition-colors ${
+              !purpose.trim()
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
             📋 Request Approval
           </button>

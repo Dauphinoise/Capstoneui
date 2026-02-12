@@ -54,12 +54,12 @@ export function MaintenanceReportModal({ onClose, onSubmit }: MaintenanceReportM
 
         <div className="p-6 space-y-6">
           {/* Warning Banner */}
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangleIcon className="w-5 h-5 text-orange-600 mt-0.5" />
+              <AlertTriangleIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
-                <p className="font-semibold text-orange-900 text-sm mb-1">Immediate Action</p>
-                <p className="text-xs text-orange-800">
+                <p className="font-semibold text-yellow-900 text-sm mb-1">Immediate Action</p>
+                <p className="text-xs text-yellow-800">
                   The room will be marked as "Under Maintenance" until the issue is resolved. Future bookings will be suspended.
                 </p>
               </div>

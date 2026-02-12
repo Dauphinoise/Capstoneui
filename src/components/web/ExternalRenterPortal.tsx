@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarIcon, UsersIcon, MapPinIcon, DollarSignIcon, DownloadIcon, LayoutGridIcon, ClipboardListIcon } from 'lucide-react';
+import { CalendarIcon, UsersIcon, MapPinIcon, DollarSignIcon, DownloadIcon, LayoutGridIcon, ClipboardListIcon, UploadIcon, FileTextIcon, CheckCircleIcon, AlertCircleIcon, ArrowRightIcon } from 'lucide-react';
 
 interface Venue {
   id: string;
@@ -12,11 +12,26 @@ interface Venue {
 
 type BookingStatus = 'request' | 'payment' | 'approved';
 type ViewType = 'catalog' | 'dashboard';
+type RenterType = 'affiliate' | 'guest' | null;
+
+interface Booking {
+  id: string;
+  venueName: string;
+  date: string;
+  time: string;
+  status: 'pending-endorsement' | 'pending-super-admin' | 'pending-fmo' | 'approved' | 'rejected';
+  renterType: 'affiliate' | 'guest';
+  approvalStep: number;
+  totalSteps: number;
+}
 
 export function ExternalRenterPortal() {
   const [view, setView] = useState<ViewType>('catalog');
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [bookingStatus, setBookingStatus] = useState<BookingStatus>('request');
+  const [renterType, setRenterType] = useState<RenterType>(null);
+  const [letterOfIntent, setLetterOfIntent] = useState<File | null>(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   const venues: Venue[] = [
     {

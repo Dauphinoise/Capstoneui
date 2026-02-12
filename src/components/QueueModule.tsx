@@ -29,7 +29,7 @@ const departments: Department[] = [
     estimatedWait: 15,
     peopleInLine: 7,
     icon: '📝',
-    color: 'from-green-500 to-green-600',
+    color: 'from-blue-500 to-blue-600',
   },
   {
     id: 'admission',
@@ -45,7 +45,7 @@ const departments: Department[] = [
     estimatedWait: 20,
     peopleInLine: 9,
     icon: '💰',
-    color: 'from-yellow-500 to-yellow-600',
+    color: 'from-blue-500 to-blue-600',
   },
   {
     id: 'itso',

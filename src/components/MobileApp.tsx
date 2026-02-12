@@ -9,14 +9,16 @@ import { CheckInModal } from './CheckInModal';
 import { BookingModal } from './BookingModal';
 import { CollaborativeCheckInModal } from './CollaborativeCheckInModal';
 import { MyCalendar } from './MyCalendar';
+import { Notifications } from './Notifications';
+import { AccountSettings } from './AccountSettings';
 import { getOrdinal } from '../utils/ordinal';
 
-type ScreenType = 'home' | 'rooms' | 'queue' | 'profile' | 'my-calendar';
+type ScreenType = 'home' | 'rooms' | 'queue' | 'profile' | 'my-calendar' | 'notifications' | 'settings';
 
 export interface Room {
   id: string;
   name: string;
-  type: 'classroom' | 'lab' | 'gym' | 'hall' | 'study-room' | 'library';
+  type: 'classroom' | 'lab' | 'gym' | 'hall' | 'study-room' | 'library' | 'kitchen' | 'restaurant' | 'suite' | 'comlab' | 'engineering-lab' | 'science-lab';
   status: 'available' | 'occupied' | 'pending' | 'maintenance' | 'reserved';
   occupiedBy?: string;
   capacity: number;
@@ -35,16 +37,25 @@ export interface Booking {
   id: string;
   roomId: string;
   roomName: string;
+  roomType?: Room['type'];
   startTime: string;
   endTime: string;
   date: string;
   equipment: string[];
+  purpose: string; // Academic purpose description
   status: 'active' | 'pending' | 'completed' | 'cancelled' | 'awaiting-checkin';
   requiresApproval: boolean;
   checkedIn: boolean;
   checkInDeadline?: Date;
   sessionCode?: string;
   groupMembers?: string[];
+  approvalWorkflow?: {
+    step: number;
+    totalSteps: number;
+    currentApprover: string;
+    approvers: string[];
+    statuses: ('pending' | 'approved' | 'rejected')[];
+  };
 }
 
 export interface QueueTicket {
@@ -230,7 +241,7 @@ export function MobileApp({ onBack, initialUserType = 'student' }: MobileAppProp
     <div className="min-h-screen bg-gray-100 pb-20 relative">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center sticky top-0 z-10">
-        <div className="text-lg font-bold text-gray-900"></div>
+        <div className="text-lg font-bold text-gray-900">ICRRUS</div>
       </div>
 
       {/* Push Notifications */}
@@ -258,6 +269,7 @@ export function MobileApp({ onBack, initialUserType = 'student' }: MobileAppProp
             onShowCollaborativeCheckIn={() => setShowCollaborativeCheckIn(true)}
             onViewCalendar={() => setCurrentScreen('my-calendar')}
             upcomingBookingsCount={mockBookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled').length}
+            onShowNotifications={() => setCurrentScreen('notifications')}
           />
         )}
         {currentScreen === 'rooms' && (
@@ -275,6 +287,9 @@ export function MobileApp({ onBack, initialUserType = 'student' }: MobileAppProp
             userName={userName} 
             userType={userType}
             onViewCalendar={() => setCurrentScreen('my-calendar')}
+            onViewNotifications={() => setCurrentScreen('notifications')}
+            onViewSettings={() => setCurrentScreen('settings')}
+            onLogout={onBack}
           />
         )}
         {currentScreen === 'my-calendar' && (
@@ -282,6 +297,19 @@ export function MobileApp({ onBack, initialUserType = 'student' }: MobileAppProp
             bookings={mockBookings} 
             onCancelBooking={handleCancelBooking}
             onBack={() => setCurrentScreen('home')}
+          />
+        )}
+        {currentScreen === 'notifications' && (
+          <Notifications
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+        {currentScreen === 'settings' && (
+          <AccountSettings
+            userName={userName}
+            userType={userType}
+            onBack={() => setCurrentScreen('profile')}
+            onLogout={onBack}
           />
         )}
       </div>

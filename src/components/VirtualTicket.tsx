@@ -63,12 +63,12 @@ export function VirtualTicket({ ticket, onLeaveQueue, onBack }: VirtualTicketPro
             <div className="text-center mb-2">
               <p className="text-sm text-gray-500 font-medium">Ticket Number</p>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl py-8 border-2 border-orange-200">
+            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl py-8 border-2 border-yellow-200">
               <div className="text-center">
-                <div className="text-7xl font-bold text-orange-600 tracking-tight">
+                <div className="text-7xl font-bold text-yellow-600 tracking-tight">
                   {ticket.ticketNumber}
                 </div>
-                <p className="text-sm text-orange-800 mt-2 font-medium">Your Queue Number</p>
+                <p className="text-sm text-yellow-800 mt-2 font-medium">Your Queue Number</p>
               </div>
             </div>
           </div>

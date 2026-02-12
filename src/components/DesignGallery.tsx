@@ -9,6 +9,12 @@ interface DesignGalleryProps {
 export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
   const studentScreens = [
     {
+      id: 'splash-student-faculty',
+      name: 'Mobile Splash Screen',
+      description: '4-page onboarding with Next/Back navigation',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
       id: 'student-faculty-login',
       name: 'Student/Faculty Login',
       description: 'Login screen with email/password',
@@ -33,7 +39,7 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
       id: 'mobile-faculty-home',
       name: 'Faculty - Home (Mobile)',
       description: 'Dashboard with override privileges',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-blue-500 to-blue-600',
     },
   ];
 
@@ -63,19 +69,31 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
       id: 'staff-login',
       name: 'Staff Login',
       description: 'Staff portal login',
-      color: 'from-green-500 to-green-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'admin-login',
       name: 'Admin Login',
       description: 'Admin portal (6 types)',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'super-admin-login',
       name: 'Super Admin Login',
-      description: 'Super Admin portal (orange/red)',
-      color: 'from-orange-500 to-red-600',
+      description: 'Super Admin portal',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'program-chair-login',
+      name: 'Program Chair Login',
+      description: 'CTHM & SECA program chair login',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'dept-endorser-login',
+      name: 'Dept. Endorser Login',
+      description: 'Department endorser portal login',
+      color: 'from-blue-500 to-blue-600',
     },
   ];
 
@@ -84,24 +102,42 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
       id: 'super-admin',
       name: 'Super Admin Dashboard',
       description: 'Full system management',
-      color: 'from-red-500 to-red-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'facility-admin',
       name: 'Facility Admin Dashboard',
       description: 'Manage all facilities',
-      color: 'from-yellow-500 to-yellow-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'staff-counter',
       name: 'Staff Counter Dashboard',
       description: 'Queue management interface',
-      color: 'from-green-500 to-green-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'librarian',
       name: 'Librarian Dashboard',
       description: 'Library admin interface',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'program-chair-cthm',
+      name: 'CTHM Program Chair Portal',
+      description: 'Kitchen/Restaurant/Suite approvals',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'program-chair-seca',
+      name: 'SECA Program Chair Portal',
+      description: 'Lab/ComLab booking approvals',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'dept-endorser',
+      name: 'Department Endorser Portal',
+      description: 'Affiliate organization endorsements',
       color: 'from-blue-500 to-blue-600',
     },
   ];
@@ -118,14 +154,14 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
       id: 'service-admin-treasury',
       name: 'Treasury Service Admin',
       description: 'Treasury queue management',
-      color: 'from-yellow-600 to-yellow-700',
+      color: 'from-blue-500 to-blue-600',
       icon: '💰',
     },
     {
       id: 'service-admin-registrar',
       name: 'Registrar Service Admin',
       description: 'Registrar queue management',
-      color: 'from-green-500 to-green-600',
+      color: 'from-blue-500 to-blue-600',
       icon: '📝',
     },
     {
@@ -142,19 +178,25 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
       id: 'kiosk',
       name: 'Kiosk UI',
       description: 'Touch-screen walk-in interface',
-      color: 'from-yellow-500 to-yellow-600',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'hallway-monitor',
       name: 'Hallway Monitor',
       description: 'Digital display screen',
-      color: 'from-red-500 to-red-600',
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 'external-renter-auth',
+      name: 'External Renter Auth',
+      description: 'Affiliate/Guest login & registration',
+      color: 'from-blue-500 to-blue-600',
     },
     {
       id: 'external-renter',
       name: 'External Renter Portal',
       description: 'Public venue booking',
-      color: 'from-gray-500 to-gray-600',
+      color: 'from-blue-500 to-blue-600',
     },
   ];
 
@@ -172,7 +214,7 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -210,7 +252,7 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
         {/* Faculty Screens */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-1 h-8 bg-purple-600 rounded-full"></div>
+            <div className="w-1 h-8 bg-blue-600 rounded-full"></div>
             <h2 className="text-2xl font-bold text-gray-900">
               Faculty Screens
             </h2>
@@ -240,7 +282,7 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
         {/* Admin Login Screens */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-1 h-8 bg-purple-600 rounded-full"></div>
+            <div className="w-1 h-8 bg-yellow-600 rounded-full"></div>
             <h2 className="text-2xl font-bold text-gray-900">
               Admin Login Portals
             </h2>
@@ -285,7 +327,7 @@ export function DesignGallery({ onSelectScreen, onBack }: DesignGalleryProps) {
         {/* Kiosk & Display Screens */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-1 h-8 bg-cyan-600 rounded-full"></div>
+            <div className="w-1 h-8 bg-gray-600 rounded-full"></div>
             <h2 className="text-2xl font-bold text-gray-900">
               Kiosk & Display Screens
             </h2>

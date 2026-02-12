@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BookOpenIcon, UsersIcon, ClockIcon, TrendingUpIcon, WifiIcon, MonitorIcon, PlusCircleIcon, EditIcon, TrashIcon, MenuIcon, XIcon, LayoutDashboardIcon, DoorClosedIcon } from 'lucide-react';
+import { BookOpenIcon, UsersIcon, ClockIcon, TrendingUpIcon, WifiIcon, MonitorIcon, PlusCircleIcon, EditIcon, TrashIcon, MenuIcon, XIcon, LayoutDashboardIcon, DoorClosedIcon, BellIcon, SettingsIcon } from 'lucide-react';
+import { WebAccountSettings } from './WebAccountSettings';
 
 type TabType = 'overview' | 'rooms';
 
@@ -23,6 +24,8 @@ export function LibrarianDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAddRoom, setShowAddRoom] = useState(false);
   const [showEditRoom, setShowEditRoom] = useState<StudyRoom | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showAccountSettings, setShowAccountSettings] = useState(false);
 
   const [studyRooms, setStudyRooms] = useState<StudyRoom[]>([
     {
@@ -237,6 +240,20 @@ export function LibrarianDashboard() {
                 </h1>
                 <p className="text-sm text-gray-600">Library Study Room Management</p>
               </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <BellIcon className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => setShowAccountSettings(!showAccountSettings)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <SettingsIcon className="w-6 h-6" />
+              </button>
             </div>
           </div>
         </header>
@@ -523,6 +540,44 @@ export function LibrarianDashboard() {
                   Save Changes
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notifications Modal */}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold mb-4">Notifications</h3>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">No new notifications.</p>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Account Settings Modal */}
+      {showAccountSettings && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold mb-4">Account Settings</h3>
+            <WebAccountSettings />
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setShowAccountSettings(false)}
+                className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

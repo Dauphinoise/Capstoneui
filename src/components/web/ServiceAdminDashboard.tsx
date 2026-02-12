@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { LayoutDashboardIcon, UsersIcon, MonitorIcon, XIcon, UserPlusIcon, EditIcon, TrashIcon, SettingsIcon, ClockIcon, ListIcon, AlertTriangleIcon } from 'lucide-react';
+import { LayoutDashboardIcon, UsersIcon, MonitorIcon, XIcon, UserPlusIcon, EditIcon, TrashIcon, SettingsIcon, ClockIcon, ListIcon, AlertTriangleIcon, CalendarIcon, CheckCircleIcon, XCircleIcon, ChevronDownIcon, ChevronUpIcon, BellIcon } from 'lucide-react';
+import { WebAccountSettings } from './WebAccountSettings';
 
 type ServiceType = 'itso' | 'treasury' | 'registrar' | 'admission';
-type TabType = 'overview' | 'queue' | 'staff' | 'windows' | 'settings';
+type TabType = 'overview' | 'queue' | 'staff' | 'windows' | 'comlab-bookings' | 'settings';
 
 interface ServiceConfig {
   name: string;
@@ -101,6 +102,8 @@ export function ServiceAdminDashboard({ serviceType }: { serviceType: ServiceTyp
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [showAddStaff, setShowAddStaff] = useState(false);
   const [showAddWindow, setShowAddWindow] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showAccountSettings, setShowAccountSettings] = useState(false);
 
   const [stats] = useState<QueueStats>({
     active: 12,
@@ -176,6 +179,7 @@ export function ServiceAdminDashboard({ serviceType }: { serviceType: ServiceTyp
     { id: 'queue' as TabType, label: 'Queue Management', icon: ListIcon },
     { id: 'staff' as TabType, label: 'Staff Management', icon: UserPlusIcon },
     { id: 'windows' as TabType, label: 'Service Windows', icon: MonitorIcon },
+    ...(serviceType === 'itso' ? [{ id: 'comlab-bookings' as TabType, label: 'ComLab Bookings', icon: CalendarIcon }] : []),
     { id: 'settings' as TabType, label: 'Settings', icon: SettingsIcon },
   ];
 
@@ -220,6 +224,20 @@ export function ServiceAdminDashboard({ serviceType }: { serviceType: ServiceTyp
                 {navItems.find(item => item.id === activeTab)?.label}
               </h1>
               <p className="text-sm text-gray-600">Queue Management Dashboard</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <BellIcon className="w-6 h-6 text-gray-600" />
+              </button>
+              <button
+                onClick={() => setShowAccountSettings(!showAccountSettings)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <SettingsIcon className="w-6 h-6 text-gray-600" />
+              </button>
             </div>
           </div>
         </header>
@@ -487,6 +505,16 @@ export function ServiceAdminDashboard({ serviceType }: { serviceType: ServiceTyp
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* COMLAB BOOKINGS TAB */}
+          {activeTab === 'comlab-bookings' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">ComLab Bookings</h3>
+                <p className="text-gray-600">Manage and view ComLab bookings</p>
               </div>
             </div>
           )}

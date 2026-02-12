@@ -23,10 +23,10 @@ const serviceTypesByDept = {
     { id: 'payment', name: 'Payment', window: 'Windows 3-5', color: 'text-yellow-600' },
   ],
   registrar: [
-    { id: 'window-1', name: 'Window 1 (BSCE, BSCPE, BSBA)', color: 'text-blue-600' },
-    { id: 'window-2', name: 'Window 2 (BSMA, BSPSY, BPED)', color: 'text-green-600' },
+    { id: 'window-1', name: 'Window 1 (BSBA, BSOA, BSPSYCH, POLSCI, BSE)', color: 'text-blue-600' },
+    { id: 'window-2', name: 'Window 2 (CCJE, PA, BAC, BEED)', color: 'text-green-600' },
     { id: 'window-3', name: 'Window 3 (Senior High School)', color: 'text-yellow-600' },
-    { id: 'window-4', name: 'Window 4 (BSARCH, ABCOMM, BSCS-ML, BSIT-MWA)', color: 'text-purple-600' },
+    { id: 'window-4', name: 'Window 4 (BSARCH, ABCOMM, BSCS-ML, BSIT-MWA)', color: 'text-blue-600' },
     { id: 'window-5', name: 'Window 5 (BSTM, BSA, BSHM)', color: 'text-red-600' },
   ],
   itso: [

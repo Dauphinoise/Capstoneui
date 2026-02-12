@@ -1,8 +1,8 @@
 import React from 'react';
-import { GraduationCapIcon, UsersIcon, ShieldIcon, BuildingIcon, ArrowRightIcon, CrownIcon } from 'lucide-react';
+import { GraduationCapIcon, UsersIcon, ShieldIcon, BuildingIcon, ArrowRightIcon, CrownIcon, AwardIcon, FileCheckIcon } from 'lucide-react';
 
 interface AuthLandingProps {
-  onSelectPortal: (portal: 'student-faculty' | 'staff' | 'admin' | 'super-admin' | 'external-renter') => void;
+  onSelectPortal: (portal: 'student-faculty' | 'staff' | 'admin' | 'super-admin' | 'external-renter' | 'program-chair' | 'dept-endorser') => void;
 }
 
 export function AuthLanding({ onSelectPortal }: AuthLandingProps) {
@@ -12,8 +12,8 @@ export function AuthLanding({ onSelectPortal }: AuthLandingProps) {
       icon: GraduationCapIcon,
       title: 'Student & Faculty',
       description: 'Access room reservations, queues, and schedules',
-      color: 'from-blue-500 to-blue-600',
-      iconBg: 'bg-blue-500',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
       features: ['Room Booking', 'Virtual Queue', 'Check-in System', 'Profile Management']
     },
     {
@@ -21,8 +21,8 @@ export function AuthLanding({ onSelectPortal }: AuthLandingProps) {
       icon: UsersIcon,
       title: 'Service Staff',
       description: 'Manage service queues and assist students',
-      color: 'from-blue-500 to-blue-600',
-      iconBg: 'bg-blue-500',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
       features: ['Queue Management', 'Ticket Control', 'Service Monitoring', 'Staff Dashboard']
     },
     {
@@ -30,8 +30,8 @@ export function AuthLanding({ onSelectPortal }: AuthLandingProps) {
       icon: ShieldIcon,
       title: 'Admin Portal',
       description: 'System administration and facility management',
-      color: 'from-yellow-500 to-yellow-600',
-      iconBg: 'bg-yellow-500',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
       features: ['Facility Management', 'System Config', 'User Management', 'Analytics & Reports']
     },
     {
@@ -48,9 +48,27 @@ export function AuthLanding({ onSelectPortal }: AuthLandingProps) {
       icon: BuildingIcon,
       title: 'External Renter',
       description: 'Apply for venue rental access',
-      color: 'from-gray-500 to-gray-600',
-      iconBg: 'bg-gray-500',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
       features: ['Venue Booking', 'Rental Application', 'Payment Portal', 'Event Management']
+    },
+    {
+      id: 'program-chair' as const,
+      icon: AwardIcon,
+      title: 'Program Chair',
+      description: 'Review and approve program facility bookings',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
+      features: ['Booking Approvals', 'Program Schedule', 'Student Management', 'Resource Oversight']
+    },
+    {
+      id: 'dept-endorser' as const,
+      icon: FileCheckIcon,
+      title: 'Department Endorser',
+      description: 'Endorse affiliate organization facility requests',
+      color: 'from-blue-600 to-blue-700',
+      iconBg: 'bg-blue-600',
+      features: ['Affiliate Endorsements', 'No Payment Required', 'Organization Verification', 'FMO Forwarding']
     }
   ];
 

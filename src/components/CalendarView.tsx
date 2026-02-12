@@ -73,7 +73,7 @@ export function CalendarView({ onSelectDate, selectedDate, onClose, availability
 
   const getAvailabilityColor = (count: number) => {
     if (count === 0) return 'bg-gray-100 text-gray-400';
-    if (count <= 3) return 'bg-orange-50 text-orange-600';
+    if (count <= 3) return 'bg-yellow-50 text-yellow-600';
     if (count <= 6) return 'bg-yellow-50 text-yellow-600';
     return 'bg-green-50 text-green-600';
   };
@@ -126,7 +126,7 @@ export function CalendarView({ onSelectDate, selectedDate, onClose, availability
   return (
     <div className="bg-white rounded-t-3xl w-full max-w-md">
       {/* Header */}
-      <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-t-3xl">
+      <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 rounded-t-3xl">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <CalendarIcon className="w-5 h-5" />
@@ -194,7 +194,7 @@ export function CalendarView({ onSelectDate, selectedDate, onClose, availability
               <span className="text-gray-600">4-6 rooms</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-orange-50 border border-orange-200 rounded"></div>
+              <div className="w-6 h-6 bg-yellow-50 border border-yellow-200 rounded"></div>
               <span className="text-gray-600">1-3 rooms</span>
             </div>
             <div className="flex items-center gap-2">
